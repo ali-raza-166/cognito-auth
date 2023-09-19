@@ -66,6 +66,7 @@ const Signin = () => {
           {authStatus === "pending" ? "Signing in..." : "Sign in"}
         </button>
         {authStatus === "failed" && <p className="error text-center">Invalid Email or Password</p>}
+        {authStatus === "rejected" && <p className="error text-center">Unknown Error</p>}
       </Form>
     </Formik>
   );

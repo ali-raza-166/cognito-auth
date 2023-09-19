@@ -7,7 +7,7 @@ const initialState = {
   firstLogin: false,
   passwordChanged: false,
   authError: null,
-  authStatus: "idle", // "succeeded" | "failed" | "loading",
+  authStatus: "idle", // "succeeded" | "failed" | "loading" | rejected,
   accessToken: localStorage.getItem("accessToken"),
 };
 
@@ -71,7 +71,7 @@ const authSlice = createSlice({
             state.firstLogin = true;
             state.email = parsedAtt.email;
             localStorage.setItem("email", parsedAtt.email);
-            state.authStatus = "fulfilled";
+            state.authStatus = "succeeded";
             state.authError = null;
           } else {
             //if second signin
@@ -79,13 +79,13 @@ const authSlice = createSlice({
             state.isLoggedIn = true;
             localStorage.setItem("isLoggedIn", true);
             localStorage.setItem("accessToken", data.AuthenticationResult.AccessToken);
-            state.authStatus = "fulfilled";
+            state.authStatus = "succeeded";
             state.authError = null;
           }
         }
       })
       .addCase(loginUser.rejected, (state) => {
-        state.authStatus = "failed";
+        state.authStatus = "rejected";
         // state.authError = action.payload.response.message;
       })
       .addCase(changePassword.pending, (state) => {
@@ -116,4 +116,5 @@ export const getIsLoggedIn = (state) => state.auth.isLoggedIn;
 export const getFirstLogin = (state) => state.auth.firstLogin;
 export const getUserEmail = (state) => state.auth.email;
 export const getPasswordChanged = (state) => state.auth.passwordChanged;
+export const getAccessToken = (state) => state.auth.accessToken;
 export default authSlice.reducer;
