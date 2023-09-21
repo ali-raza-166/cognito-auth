@@ -8,12 +8,13 @@ const initialState = {
 };
 
 export const fetchSimilarDocs = createAsyncThunk("data", async (params) => {
-  // console.log({ params }); //{q: "Ali"}
-  const apiUrl = "https://has2fik9ng.execute-api.us-east-1.amazonaws.com/genai-app-poc-ApiStage/api/v1/llm/rag";
-  // const accessToken = params.accessToken;
+  console.log({ params }); //{q: "Ali"}
+  const apiUrl = "https://br2voe1z71.execute-api.us-east-1.amazonaws.com/genai-app-poc-ApiStage/api/v1/llm/rag";
+
   const headers = {
     "Content-Type": "application/json",
     accept: "application/json",
+    Authorization: `Bearer ${params.accessToken}`,
   };
   try {
     const response = await axios.post(apiUrl, params, {

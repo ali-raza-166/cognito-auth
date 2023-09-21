@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import * as Yup from "yup";
 import { Form, Formik, Field, ErrorMessage } from "formik";
 import { useSelector, useDispatch } from "react-redux";
-import { getIsLoggedIn } from "../store/slices/authSlice";
+import { getIsLoggedIn, getAccessToken } from "../store/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { fetchSimilarDocs, getData, getDataSliceStatus } from "../store/slices/dataSlice";
 import DisplayData from "../components/HomeComponents/DisplayData";
@@ -17,7 +17,7 @@ const HomePage = () => {
   const searchItemSchema = Yup.object().shape({
     searchTerm: Yup.string().required("Required!"),
   });
-  // const accessToken = useSelector(getAccessToken);
+  const accessToken = useSelector(getAccessToken);
   const apiData = useSelector(getData);
   const dataSliceStatus = useSelector(getDataSliceStatus);
   // const dataSliceError = useSelector(getDataSliceError);
@@ -30,6 +30,7 @@ const HomePage = () => {
       navigate("/");
     }
   }, [isLogggedIn, navigate]);
+
   useEffect(() => {
     return () => {
       dispatch(dataSliceActions.resetState());
@@ -74,7 +75,9 @@ const HomePage = () => {
       <Formik
         initialValues={initialValues}
         validationSchema={searchItemSchema}
-        onSubmit={(values) => dispatch(fetchSimilarDocs({ q: values.searchTerm, verbose: true }))}
+        onSubmit={(values) =>
+          dispatch(fetchSimilarDocs({ q: values.searchTerm, verbose: true, accessToken: accessToken }))
+        }
       >
         <Form className="felx items-center justify-center sm:px-9 md:px-60 px- pt-10 mb-5">
           <div className="flex items-center justify-center">
