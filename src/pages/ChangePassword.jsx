@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, Formik, Field, ErrorMessage } from "formik";
 import { ChangePasswordSchema } from "../validations/ChangePasswordSchema";
 import InputTextError from "../components/Auth/InputTextError";
@@ -21,9 +21,11 @@ const ChangePassword = () => {
   const email = useSelector(getUserEmail);
   const authStatus = useSelector(getAuthStatus);
   const passwordChanged = useSelector(getPasswordChanged);
-  if (passwordChanged) {
-    navigate("/");
-  }
+  useEffect(() => {
+    if (passwordChanged) {
+      navigate("/");
+    }
+  }, [passwordChanged, navigate]);
 
   return (
     <Formik

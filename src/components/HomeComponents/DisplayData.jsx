@@ -8,7 +8,17 @@ const DisplayData = (props) => {
         {props.data.map((item, index) => (
           <li key={index}>
             <a href={item.url} target="_blank" rel="noopener noreferrer">
-              <Card className="bg-gray-950 p-5 mb-4 shadow-custom">{item.source}</Card>
+              <Card className="bg-gray-950 p-5 mb-4 shadow-custom">
+                <span className="text-primary font-bold">Source: </span>
+                {item.source}
+                {index === 0 && (
+                  <p className="text-primary font-extralight">
+                    <br />
+                    <span className="text-primary font-bold">Context: </span>
+                    {item.context}
+                  </p>
+                )}
+              </Card>
             </a>
           </li>
         ))}

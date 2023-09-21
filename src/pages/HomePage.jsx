@@ -20,9 +20,7 @@ const HomePage = () => {
   const accessToken = useSelector(getAccessToken);
   const apiData = useSelector(getData);
   const dataSliceStatus = useSelector(getDataSliceStatus);
-  // const dataSliceError = useSelector(getDataSliceError);
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
   const isLogggedIn = useSelector(getIsLoggedIn);
   useEffect(() => {
@@ -30,7 +28,6 @@ const HomePage = () => {
       navigate("/");
     }
   }, [isLogggedIn, navigate]);
-
   useEffect(() => {
     return () => {
       dispatch(dataSliceActions.resetState());
@@ -45,6 +42,7 @@ const HomePage = () => {
         source: obj.source,
         url: urls[index],
       }));
+      mappedArrayofData[0].context = apiData.context;
       cardContent = (
         <Card className="bg-secondary p-7 ">
           <DisplayData data={mappedArrayofData} />
