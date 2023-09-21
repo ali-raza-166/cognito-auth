@@ -9,7 +9,7 @@ const initialState = {
 
 export const fetchSimilarDocs = createAsyncThunk("data", async (params) => {
   // console.log({ params }); //{q: "Ali"}
-  const apiUrl = "https://wjq3pdij55.execute-api.us-east-1.amazonaws.com/genai-app-poc-ApiStage/api/v1/llm/rag";
+  const apiUrl = "https://has2fik9ng.execute-api.us-east-1.amazonaws.com/genai-app-poc-ApiStage/api/v1/llm/rag";
   // const accessToken = params.accessToken;
   const headers = {
     "Content-Type": "application/json",
@@ -19,17 +19,22 @@ export const fetchSimilarDocs = createAsyncThunk("data", async (params) => {
     const response = await axios.post(apiUrl, params, {
       headers,
     });
-    console.log(response);
-    return response;
+    const responseBody = JSON.parse(response.data.body);
+    const responseBodyData = responseBody.response.data;
+    return responseBodyData;
   } catch (error) {
     throw error.response;
   }
 });
 
-const authSlice = createSlice({
+const dataSlice = createSlice({
   name: "data",
   initialState,
-  reducers: {},
+  reducers: {
+    resetState: (state) => {
+      state.dataSliceStatus = "idle";
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchSimilarDocs.pending, (state) => {
@@ -41,16 +46,16 @@ const authSlice = createSlice({
         state.data = action.payload;
       })
       .addCase(fetchSimilarDocs.rejected, (state, action) => {
-        console.log(action.payload);
+        // console.log(action.payload);
         state.dataSliceStatus = "rejected";
         state.error = action.error.message;
       });
   },
 });
 
-export const authActions = authSlice.actions;
-export const getDataSliceStatus = (state) => state.auth.dataSliceStatus;
-export const getDataSliceError = (state) => state.auth.error;
-export const getData = (state) => state.auth.data;
+export const dataSliceActions = dataSlice.actions;
+export const getDataSliceStatus = (state) => state.data.dataSliceStatus;
+export const getDataSliceError = (state) => state.data.error;
+export const getData = (state) => state.data.data;
 
-export default authSlice.reducer;
+export default dataSlice.reducer;

@@ -12,7 +12,7 @@ const MainNavigation = () => {
   return (
     <header className="header">
       <nav className="flex justify-between pt-10">
-        <img src={logo} alt="Description of the image" className=" pl-4 w-24 h-auto" />
+        <img src={logo} alt="Description of the image" className=" w-16 h-auto" />
         {isLoggedin && (
           <div>
             <p className="btn w-28 h-auto text-center cursor-pointer text-sm font-light" onClick={handleLogout}>

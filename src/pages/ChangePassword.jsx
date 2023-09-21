@@ -4,7 +4,7 @@ import { ChangePasswordSchema } from "../validations/ChangePasswordSchema";
 import InputTextError from "../components/Auth/InputTextError";
 import { ReactComponent as EyeIcon } from "../assets/svg/EyeIcon.svg";
 import { ReactComponent as EyeOffIcon } from "../assets/svg/EyeOffIcon.svg";
-import { changePassword, getUserEmail, getPasswordChanged } from "../store/slices/authSlice";
+import { changePassword, getUserEmail, getPasswordChanged, getAuthStatus } from "../store/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 const initialValues = {
@@ -19,6 +19,7 @@ const ChangePassword = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const email = useSelector(getUserEmail);
+  const authStatus = useSelector(getAuthStatus);
   const passwordChanged = useSelector(getPasswordChanged);
   if (passwordChanged) {
     navigate("/");
@@ -92,7 +93,7 @@ const ChangePassword = () => {
           <ErrorMessage name="confirmNewPassword" component={InputTextError} />
         </div>
         <button type="submit" className="btn">
-          Change Password
+          {authStatus === "pending" ? "Loading..." : "Change Password"}
         </button>
       </Form>
     </Formik>

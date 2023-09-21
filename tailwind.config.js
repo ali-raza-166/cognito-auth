@@ -11,6 +11,9 @@ export default {
         backgroundLight: "#fff",
         backgroundHover: "#223a55",
       },
+      boxShadow: {
+        custom: "0px 3px 4px 0px rgba(0,0,0,0.75)",
+      },
     },
   },
   plugins: [],

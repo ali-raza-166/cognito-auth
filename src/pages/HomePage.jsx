@@ -3,10 +3,12 @@ import { useEffect } from "react";
 import * as Yup from "yup";
 import { Form, Formik, Field, ErrorMessage } from "formik";
 import { useSelector, useDispatch } from "react-redux";
-import { getIsLoggedIn, getAccessToken } from "../store/slices/authSlice";
+import { getIsLoggedIn } from "../store/slices/authSlice";
 import { useNavigate } from "react-router-dom";
-import { fetchSimilarDocs, getData, getDataSliceError, getDataSliceStatus } from "../store/slices/dataSlice";
-
+import { fetchSimilarDocs, getData, getDataSliceStatus } from "../store/slices/dataSlice";
+import DisplayData from "../components/HomeComponents/DisplayData";
+import Card from "../components/UI/Card";
+import { dataSliceActions } from "../store/slices/dataSlice";
 const initialValues = {
   searchTerm: "",
 };
@@ -28,7 +30,45 @@ const HomePage = () => {
       navigate("/");
     }
   }, [isLogggedIn, navigate]);
-  // const errorContent = dataSliceStatus === "failed" ? dataSliceError : null;
+  useEffect(() => {
+    return () => {
+      dispatch(dataSliceActions.resetState());
+    };
+  }, [dispatch]);
+  let cardContent;
+  if (dataSliceStatus === "succeeded") {
+    if (Object.keys(apiData).length > 0) {
+      const metadata = apiData.metadata;
+      const urls = apiData.urls;
+      const mappedArrayofData = metadata.map((obj, index) => ({
+        source: obj.source,
+        url: urls[index],
+      }));
+      cardContent = (
+        <Card className="bg-secondary p-7 ">
+          <DisplayData data={mappedArrayofData} />
+        </Card>
+      );
+    } else {
+      cardContent = (
+        <Card className="bg-secondary p-7 ">
+          <p className="text-primary pb-2">No results</p>;
+        </Card>
+      );
+    }
+  } else if (dataSliceStatus === "rejected") {
+    cardContent = (
+      <Card className="bg-secondary p-7 ">
+        <p className="text-primary pb-2 font-bold">Error Fetching data</p>
+        <p className="text-primary pl-4">This may occur due to following reasons</p>
+        <ol className="pl-8 list-decimal text-primary">
+          <li>Your interent connection is disabled</li>
+          <li>Internal Server Error</li>
+        </ol>
+      </Card>
+    );
+  }
+
   return (
     <>
       <Formik
@@ -36,7 +76,7 @@ const HomePage = () => {
         validationSchema={searchItemSchema}
         onSubmit={(values) => dispatch(fetchSimilarDocs({ q: values.searchTerm, verbose: true }))}
       >
-        <Form className="felx items-center justify-center sm:px-9 md:px-60 px- pt-10">
+        <Form className="felx items-center justify-center sm:px-9 md:px-60 px- pt-10 mb-5">
           <div className="flex items-center justify-center">
             <Field
               type="text"
@@ -54,9 +94,7 @@ const HomePage = () => {
           <ErrorMessage name="searchTerm" component={InputTextError} className="error" />
         </Form>
       </Formik>
-      <div>
-        <p>{apiData}</p>
-      </div>
+      {cardContent}
     </>
   );
 };
