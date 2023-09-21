@@ -62,6 +62,7 @@ const HomePage = () => {
         <p className="text-primary pl-4">This may occur due to following reasons</p>
         <ol className="pl-8 list-decimal text-primary">
           <li>Your interent connection is disabled</li>
+          <li>You may not be authorized, log back in</li>
           <li>Internal Server Error</li>
         </ol>
       </Card>
