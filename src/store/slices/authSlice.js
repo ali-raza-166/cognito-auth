@@ -76,7 +76,7 @@ const authSlice = createSlice({
             state.authError = null;
           } else {
             //if second signin
-            state.accessToken = data.AuthenticationResult.AccessToken;
+            state.accessToken = data.AuthenticationResult.IdToken;
             state.isLoggedIn = true;
             localStorage.setItem("isLoggedIn", true);
             localStorage.setItem("accessToken", data.AuthenticationResult.AccessToken);
