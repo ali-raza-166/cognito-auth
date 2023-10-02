@@ -1,30 +1,40 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { refreshIdToken } from "./authSlice";
 import axios from "axios";
-
 const initialState = {
   data: {},
-  dataSliceStatus: "idle", //| "pending" | "succeeded" | "failed",
+  dataSliceStatus: "idle", //| "pending" | "succeeded" | "failed" | "rejected",
   dataSliceError: null,
 };
-
-export const fetchSimilarDocs = createAsyncThunk("data", async (params) => {
-  console.log({ params }); //{q: "Ali"}
+const getApiData = async (apiUrl, token, params) => {
+  const response = await axios.post(apiUrl, params, {
+    headers: {
+      "Content-Type": "application/json",
+      accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const responseBody = JSON.parse(response.data.body);
+  const responseBodyData = responseBody.response.data;
+  return responseBodyData;
+};
+export const fetchSimilarDocs = createAsyncThunk("data", async (params, { dispatch, rejectWithValue }) => {
   const apiUrl = "https://ig0161ug70.execute-api.us-east-1.amazonaws.com/genai-app-poc-ApiStage/api/v1/llm/rag";
-
-  const headers = {
-    "Content-Type": "application/json",
-    accept: "application/json",
-    Authorization: `Bearer ${params.accessToken}`,
-  };
   try {
-    const response = await axios.post(apiUrl, params, {
-      headers,
-    });
-    const responseBody = JSON.parse(response.data.body);
-    const responseBodyData = responseBody.response.data;
-    return responseBodyData;
+    const response = await getApiData(apiUrl, params.accessToken, params);
+    return response;
   } catch (error) {
-    throw error.response;
+    if (error?.response?.status === 401) {
+      console.log("unAuth");
+      try {
+        await dispatch(refreshIdToken(params.refreshToken));
+        const response = await getApiData(apiUrl, localStorage.getItem("accessToken"), params);
+        return response;
+      } catch (error) {
+        return rejectWithValue(error);
+      }
+    }
+    return rejectWithValue(error);
   }
 });
 
@@ -43,13 +53,18 @@ const dataSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchSimilarDocs.fulfilled, (state, action) => {
-        state.dataSliceStatus = "succeeded";
-        state.data = action.payload;
+        if (action.payload.metadata) {
+          state.dataSliceStatus = "succeeded";
+          state.data = action.payload;
+        } else {
+          state.dataSliceStatus = "failed";
+          state.data = {};
+        }
       })
-      .addCase(fetchSimilarDocs.rejected, (state, action) => {
-        // console.log(action.payload);
+      .addCase(fetchSimilarDocs.rejected, (state) => {
+        state.data = {};
         state.dataSliceStatus = "rejected";
-        state.error = action.error.message;
+        state.dataSliceError = "Something went wrong";
       });
   },
 });

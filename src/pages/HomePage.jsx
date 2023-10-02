@@ -3,12 +3,11 @@ import { useEffect } from "react";
 import * as Yup from "yup";
 import { Form, Formik, Field, ErrorMessage } from "formik";
 import { useSelector, useDispatch } from "react-redux";
-import { getIsLoggedIn, getAccessToken } from "../store/slices/authSlice";
+import { getIsLoggedIn, getAccessToken, getRefreshToken } from "../store/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { fetchSimilarDocs, getData, getDataSliceStatus } from "../store/slices/dataSlice";
 import DisplayData from "../components/HomeComponents/DisplayData";
 import Card from "../components/UI/Card";
-import { dataSliceActions } from "../store/slices/dataSlice";
 const initialValues = {
   searchTerm: "",
 };
@@ -18,6 +17,7 @@ const HomePage = () => {
     searchTerm: Yup.string().required("Required!"),
   });
   const accessToken = useSelector(getAccessToken);
+  const refreshToken = useSelector(getRefreshToken);
   const apiData = useSelector(getData);
   const dataSliceStatus = useSelector(getDataSliceStatus);
   const navigate = useNavigate();
@@ -28,13 +28,20 @@ const HomePage = () => {
       navigate("/");
     }
   }, [isLogggedIn, navigate]);
-  useEffect(() => {
-    return () => {
-      dispatch(dataSliceActions.resetState());
-    };
-  }, [dispatch]);
+
   let cardContent;
-  if (dataSliceStatus === "succeeded") {
+  if (dataSliceStatus === "rejected" || dataSliceStatus === "failed") {
+    cardContent = (
+      <Card className="bg-secondary p-7 ">
+        <p className="text-primary pb-2 font-bold">Error Fetching data</p>
+        <p className="text-primary pl-4">This may occur due to following reasons</p>
+        <ol className="pl-8 list-decimal text-primary">
+          <li>Your internet connection is disabled</li>
+          <li>Internal Server Error</li>
+        </ol>
+      </Card>
+    );
+  } else if (dataSliceStatus === "succeeded") {
     if (Object.keys(apiData).length > 0) {
       const metadata = apiData.metadata;
       const urls = apiData.urls;
@@ -55,18 +62,6 @@ const HomePage = () => {
         </Card>
       );
     }
-  } else if (dataSliceStatus === "rejected") {
-    cardContent = (
-      <Card className="bg-secondary p-7 ">
-        <p className="text-primary pb-2 font-bold">Error Fetching data</p>
-        <p className="text-primary pl-4">This may occur due to following reasons</p>
-        <ol className="pl-8 list-decimal text-primary">
-          <li>Your interent connection is disabled</li>
-          <li>You may not be authorized, log back in</li>
-          <li>Internal Server Error</li>
-        </ol>
-      </Card>
-    );
   }
 
   return (
@@ -75,7 +70,14 @@ const HomePage = () => {
         initialValues={initialValues}
         validationSchema={searchItemSchema}
         onSubmit={(values) =>
-          dispatch(fetchSimilarDocs({ q: values.searchTerm, verbose: true, accessToken: accessToken }))
+          dispatch(
+            fetchSimilarDocs({
+              q: values.searchTerm,
+              verbose: true,
+              accessToken: accessToken,
+              refreshToken: refreshToken,
+            })
+          )
         }
       >
         <Form className="felx items-center justify-center sm:px-9 md:px-60 px- pt-10 mb-5">
