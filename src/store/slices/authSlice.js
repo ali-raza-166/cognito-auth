@@ -9,6 +9,7 @@ const initialState = {
   authError: null,
   authStatus: "idle", // "succeeded" | "failed" | "loading" | rejected,
   accessToken: localStorage.getItem("accessToken"),
+  refreshToken: localStorage.getItem("refreshToken"),
 };
 
 export const loginUser = createAsyncThunk("auth/login", async (credentials) => {
@@ -17,13 +18,23 @@ export const loginUser = createAsyncThunk("auth/login", async (credentials) => {
       "https://rlcc5t96ff.execute-api.us-east-1.amazonaws.com/dev/auth/login",
       credentials
     );
-    console.log(response.data);
     return response.data;
   } catch (error) {
     // console.log(error.message); //Request failed with status code 500
     // console.log("Response error message", error.response.data.response.message);
     // console.log("Response Code", error.response.data.responseCode);
     // return error.response.data;
+    return error;
+  }
+});
+export const refreshIdToken = createAsyncThunk("auth/refresh", async (token) => {
+  try {
+    const response = await axios.post("https://rlcc5t96ff.execute-api.us-east-1.amazonaws.com/dev/auth/token-refresh", {
+      token,
+    });
+    // console.log(response.data);
+    return response.data;
+  } catch (error) {
     return error;
   }
 });
@@ -77,9 +88,11 @@ const authSlice = createSlice({
           } else {
             //if second signin
             state.accessToken = data.AuthenticationResult.IdToken;
+            state.refreshToken = data.AuthenticationResult.RefreshToken;
             state.isLoggedIn = true;
             localStorage.setItem("isLoggedIn", true);
-            localStorage.setItem("accessToken", data.AuthenticationResult.AccessToken);
+            localStorage.setItem("accessToken", data.AuthenticationResult.IdToken);
+            localStorage.setItem("refreshToken", data.AuthenticationResult.RefreshToken);
             state.authStatus = "succeeded";
             state.authError = null;
           }
@@ -94,8 +107,6 @@ const authSlice = createSlice({
         state.authError = null;
       })
       .addCase(changePassword.fulfilled, (state, action) => {
-        console.log("Change action.payload", action.payload);
-        console.log("statussss", action.payload.response.data.ResponseMetadata.HTTPStatusCode);
         if (action.payload.response.data.ResponseMetadata.HTTPStatusCode === 200) {
           state.passwordChanged = true;
           localStorage.setItem("isLoggedIn", false);
@@ -106,6 +117,15 @@ const authSlice = createSlice({
       .addCase(changePassword.rejected, (state, action) => {
         state.authStatus = "rejected";
         state.authError = action.error.message;
+      })
+      .addCase(refreshIdToken.fulfilled, (state, action) => {
+        const response = action.payload.response.data;
+        state.accessToken = response.IdToken;
+        state.refreshToken = response.RefreshToken;
+        localStorage.setItem("accessToken", response.IdToken);
+        localStorage.setItem("refreshToken", response.RefreshToken);
+        state.authStatus = "succeeded";
+        state.authError = null;
       });
   },
 });
@@ -118,4 +138,5 @@ export const getFirstLogin = (state) => state.auth.firstLogin;
 export const getUserEmail = (state) => state.auth.email;
 export const getPasswordChanged = (state) => state.auth.passwordChanged;
 export const getAccessToken = (state) => state.auth.accessToken;
+export const getRefreshToken = (state) => state.auth.refreshToken;
 export default authSlice.reducer;
