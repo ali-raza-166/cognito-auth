@@ -8,7 +8,7 @@ const initialState = {
   passwordChanged: false,
   authError: null,
   authStatus: "idle", // "succeeded" | "failed" | "loading" | rejected,
-  accessToken: localStorage.getItem("accessToken"),
+  IdToken: localStorage.getItem("IdToken"),
 };
 
 export const loginUser = createAsyncThunk("auth/login", async (credentials) => {
@@ -46,9 +46,9 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.isLoggedIn = false;
-      state.accessToken = null;
+      state.IdToken = null;
       localStorage.removeItem("isLoggedIn");
-      localStorage.removeItem("accessToken");
+      localStorage.removeItem("IdToken");
       localStorage.removeItem("email");
     },
   },
@@ -76,10 +76,11 @@ const authSlice = createSlice({
             state.authError = null;
           } else {
             //if second signin
-            state.accessToken = data.AuthenticationResult.IdToken;
+            console.log(data.AuthenticationResult.IdToken);
+            state.IdToken = data.AuthenticationResult.IdToken;
             state.isLoggedIn = true;
             localStorage.setItem("isLoggedIn", true);
-            localStorage.setItem("accessToken", data.AuthenticationResult.IdToken);
+            localStorage.setItem("IdToken", data.AuthenticationResult.IdToken);
             state.authStatus = "succeeded";
             state.authError = null;
           }
@@ -117,5 +118,5 @@ export const getIsLoggedIn = (state) => state.auth.isLoggedIn;
 export const getFirstLogin = (state) => state.auth.firstLogin;
 export const getUserEmail = (state) => state.auth.email;
 export const getPasswordChanged = (state) => state.auth.passwordChanged;
-export const getAccessToken = (state) => state.auth.accessToken;
+export const getIdToken = (state) => state.auth.IdToken;
 export default authSlice.reducer;

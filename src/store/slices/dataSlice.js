@@ -10,11 +10,11 @@ const initialState = {
 export const fetchSimilarDocs = createAsyncThunk("data", async (params) => {
   console.log({ params }); //{q: "Ali"}
   const apiUrl = "https://y2m9s8z8og.execute-api.us-east-1.amazonaws.com/genai-app-poc-ApiStage/api/v1/llm/rag";
-
+  console.log(params.IdToken);
   const headers = {
     "Content-Type": "application/json",
     accept: "application/json",
-    Authorization: `Bearer ${params.accessToken}`,
+    Authorization: `Bearer ${params.IdToken}`,
   };
   try {
     const response = await axios.post(apiUrl, params, {
