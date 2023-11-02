@@ -17,7 +17,7 @@ export const loginUser = createAsyncThunk("auth/login", async (credentials) => {
       "https://rlcc5t96ff.execute-api.us-east-1.amazonaws.com/dev/auth/login",
       credentials
     );
-    console.log(response.data);
+    // console.log(response.data);
     return response.data;
   } catch (error) {
     // console.log(error.message); //Request failed with status code 500
@@ -33,7 +33,7 @@ export const changePassword = createAsyncThunk("auth/changePassword", async (cre
       "https://rlcc5t96ff.execute-api.us-east-1.amazonaws.com/dev/auth/changePassword",
       credentials
     );
-    console.log("Change Password Thunk Response", response.data);
+    // console.log("Change Password Thunk Response", response.data);
     return response.data;
   } catch (error) {
     throw error.response.data;
@@ -76,7 +76,7 @@ const authSlice = createSlice({
             state.authError = null;
           } else {
             //if second signin
-            console.log(data.AuthenticationResult.IdToken);
+            // console.log(data.AuthenticationResult.IdToken);
             state.IdToken = data.AuthenticationResult.IdToken;
             state.isLoggedIn = true;
             localStorage.setItem("isLoggedIn", true);
@@ -95,8 +95,8 @@ const authSlice = createSlice({
         state.authError = null;
       })
       .addCase(changePassword.fulfilled, (state, action) => {
-        console.log("Change action.payload", action.payload);
-        console.log("statussss", action.payload.response.data.ResponseMetadata.HTTPStatusCode);
+        // console.log("Change action.payload", action.payload);
+        // console.log("statussss", action.payload.response.data.ResponseMetadata.HTTPStatusCode);
         if (action.payload.response.data.ResponseMetadata.HTTPStatusCode === 200) {
           state.passwordChanged = true;
           localStorage.setItem("isLoggedIn", false);
