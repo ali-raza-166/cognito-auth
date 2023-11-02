@@ -79,7 +79,7 @@ const authSlice = createSlice({
             state.accessToken = data.AuthenticationResult.IdToken;
             state.isLoggedIn = true;
             localStorage.setItem("isLoggedIn", true);
-            localStorage.setItem("accessToken", data.AuthenticationResult.AccessToken);
+            localStorage.setItem("accessToken", data.AuthenticationResult.IdToken);
             state.authStatus = "succeeded";
             state.authError = null;
           }
