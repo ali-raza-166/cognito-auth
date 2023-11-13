@@ -14,7 +14,7 @@ const initialState = {
 export const loginUser = createAsyncThunk("auth/login", async (credentials) => {
   try {
     const response = await axios.post(
-      "https://rlcc5t96ff.execute-api.us-east-1.amazonaws.com/dev/auth/login",
+      "https://bnc8a3zph8.execute-api.us-east-1.amazonaws.com/dev/auth/login",
       credentials
     );
     // console.log(response.data);
@@ -27,18 +27,21 @@ export const loginUser = createAsyncThunk("auth/login", async (credentials) => {
     return error;
   }
 });
-export const changePassword = createAsyncThunk("auth/changePassword", async (credentials) => {
-  try {
-    const response = await axios.post(
-      "https://rlcc5t96ff.execute-api.us-east-1.amazonaws.com/dev/auth/changePassword",
-      credentials
-    );
-    // console.log("Change Password Thunk Response", response.data);
-    return response.data;
-  } catch (error) {
-    throw error.response.data;
+export const changePassword = createAsyncThunk(
+  "auth/changePassword",
+  async (credentials) => {
+    try {
+      const response = await axios.post(
+        "https://bnc8a3zph8.execute-api.us-east-1.amazonaws.com/dev/auth/changePassword",
+        credentials
+      );
+      // console.log("Change Password Thunk Response", response.data);
+      return response.data;
+    } catch (error) {
+      throw error.response.data;
+    }
   }
-});
+);
 
 const authSlice = createSlice({
   name: "auth",
@@ -97,7 +100,9 @@ const authSlice = createSlice({
       .addCase(changePassword.fulfilled, (state, action) => {
         // console.log("Change action.payload", action.payload);
         // console.log("statussss", action.payload.response.data.ResponseMetadata.HTTPStatusCode);
-        if (action.payload.response.data.ResponseMetadata.HTTPStatusCode === 200) {
+        if (
+          action.payload.response.data.ResponseMetadata.HTTPStatusCode === 200
+        ) {
           state.passwordChanged = true;
           localStorage.setItem("isLoggedIn", false);
         }
