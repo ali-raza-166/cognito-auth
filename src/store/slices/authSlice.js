@@ -14,7 +14,7 @@ const initialState = {
 export const loginUser = createAsyncThunk("auth/login", async (credentials) => {
   try {
     const response = await axios.post(
-      "https://bnc8a3zph8.execute-api.us-east-1.amazonaws.com/dev/auth/login",
+      "https://pbrjad2cxj.execute-api.us-east-1.amazonaws.com/dev/auth/login",
       credentials
     );
     // console.log(response.data);
@@ -32,7 +32,7 @@ export const changePassword = createAsyncThunk(
   async (credentials) => {
     try {
       const response = await axios.post(
-        "https://bnc8a3zph8.execute-api.us-east-1.amazonaws.com/dev/auth/changePassword",
+        "https://pbrjad2cxj.execute-api.us-east-1.amazonaws.com/dev/auth/changePassword",
         credentials
       );
       // console.log("Change Password Thunk Response", response.data);
