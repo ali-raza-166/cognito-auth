@@ -9,7 +9,8 @@ const initialState = {
 
 export const fetchSimilarDocs = createAsyncThunk("data", async (params) => {
   console.log({ params }); //{q: "Ali"}
-  const apiUrl = "https://f576meenhh.execute-api.us-east-1.amazonaws.com/genai-app-poc-ApiStage/api/v1/llm/rag";
+  const apiUrl =
+    "https://c062e0prmg.execute-api.us-east-1.amazonaws.com/genai-app-poc-ApiStage/api/v1/llm/rag";
   console.log(params.IdToken);
   const headers = {
     "Content-Type": "application/json",
