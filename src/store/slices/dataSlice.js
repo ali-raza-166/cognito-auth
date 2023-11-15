@@ -9,8 +9,7 @@ const initialState = {
 
 export const fetchSimilarDocs = createAsyncThunk("data", async (params) => {
   console.log({ params }); //{q: "Ali"}
-  const apiUrl =
-    "https://wjjy0q2wod.execute-api.us-east-1.amazonaws.com/genai-app-poc-ApiStage/api/v1/llm/rag";
+  const apiUrl = "https://f576meenhh.execute-api.us-east-1.amazonaws.com/genai-app-poc-ApiStage/api/v1/llm/rag";
   console.log(params.IdToken);
   const headers = {
     "Content-Type": "application/json",
@@ -21,9 +20,10 @@ export const fetchSimilarDocs = createAsyncThunk("data", async (params) => {
     const response = await axios.post(apiUrl, params, {
       headers,
     });
-    const responseBody = JSON.parse(response.data.body);
-    const responseBodyData = responseBody.response.data;
-    return responseBodyData;
+    console.log(response.data);
+    // const responseBody = JSON.parse(response.data.body);
+    // const responseBodyData = responseBody.response.data;
+    return response.data;
   } catch (error) {
     throw error.response;
   }

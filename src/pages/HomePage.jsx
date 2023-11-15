@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { getIsLoggedIn, getIdToken } from "../store/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { fetchSimilarDocs, getData, getDataSliceStatus } from "../store/slices/dataSlice";
-import DisplayData from "../components/HomeComponents/DisplayData";
+// import DisplayData from "../components/HomeComponents/DisplayData";
 import Card from "../components/UI/Card";
 import { dataSliceActions } from "../store/slices/dataSlice";
 const initialValues = {
@@ -36,16 +36,19 @@ const HomePage = () => {
   let cardContent;
   if (dataSliceStatus === "succeeded") {
     if (Object.keys(apiData).length > 0) {
-      const metadata = apiData.metadata;
-      const urls = apiData.urls;
-      const mappedArrayofData = metadata.map((obj, index) => ({
-        source: obj.source,
-        url: urls[index],
-      }));
-      mappedArrayofData[0].context = apiData.context;
+      console.log(apiData);
+      const question = apiData.question;
+      const answer = apiData.answer;
       cardContent = (
         <Card className="bg-secondary p-7 ">
-          <DisplayData data={mappedArrayofData} />
+          <p className="text-secondary bg-primary rounded p-3 mb-2">
+            <span className="font-bold text-red-700"> Question: </span>
+            {question}
+          </p>
+          <p className="text-secondary pb-2 text-justify text-sm bg-primary rounded p-3 ">
+            <span className="font-bold text-base text-red-700"> Answer: </span>
+            {answer}
+          </p>
         </Card>
       );
     } else {
