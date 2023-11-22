@@ -14,7 +14,7 @@ const initialState = {
 export const loginUser = createAsyncThunk("auth/login", async (credentials) => {
   try {
     const response = await axios.post(
-      "https://h97pr38l7i.execute-api.us-east-1.amazonaws.com/stage/auth/login",
+      "https://rlcc5t96ff.execute-api.us-east-1.amazonaws.com/stage/auth/login",
       credentials
     );
     // console.log(response.data);
