@@ -43,6 +43,7 @@ const HomePage = () => {
       console.log(apiData);
       const question = apiData.question;
       const answer = apiData.answer;
+      const source = apiData.source;
       cardContent = (
         <Card className="bg-secondary p-7 ">
           <p className="text-secondary bg-primary rounded p-3 mb-2">
@@ -52,6 +53,10 @@ const HomePage = () => {
           <p className="text-secondary pb-2 text-justify text-sm bg-primary rounded p-3 ">
             <span className="font-bold text-base text-red-700"> Answer: </span>
             {answer}
+            <br />
+            <br />
+            <span className="font-bold text-base text-red-700"> Source: </span>
+            {source}
           </p>
         </Card>
       );
