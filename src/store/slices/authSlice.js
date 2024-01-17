@@ -14,7 +14,7 @@ const initialState = {
 export const loginUser = createAsyncThunk("auth/login", async (credentials) => {
   try {
     const response = await axios.post(
-      "https://l21kwt2vzd.execute-api.us-east-1.amazonaws.com/xybion-dev-app-cognito-ApiStage/auth/login",
+      "https://ejhgv52dsl.execute-api.us-east-1.amazonaws.com/xybion-dev-app-cognito-ApiStage/auth/login",
       credentials
     );
     // console.log(response.data);
@@ -32,7 +32,7 @@ export const changePassword = createAsyncThunk(
   async (credentials) => {
     try {
       const response = await axios.post(
-        "https://l21kwt2vzd.execute-api.us-east-1.amazonaws.com/xybion-dev-app-cognito-ApiStage/auth/changePassword",
+        "https://ejhgv52dsl.execute-api.us-east-1.amazonaws.com/xybion-dev-app-cognito-ApiStage/auth/changePassword",
         credentials
       );
       // console.log("Change Password Thunk Response", response.data);
